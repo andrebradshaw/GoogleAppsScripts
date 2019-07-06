@@ -114,7 +114,7 @@ function parseCandidateSubmissions(){
     } //end for(attachments)
 
     var nameCheck = candNames.filter(function(el){return el != ''});
-    var nameDrop =  nameCheck.length == 1 ? candNames[0] : JSON.stringify(candNames);
+    var nameDrop =  nameCheck.length == 1 ? nameCheck[0] : JSON.stringify(nameCheck);
     var emailDrop = JSON.stringify( unq( candEmails.filter(function(el){return el != ''}) ) );
     var phoneDrop = JSON.stringify( unq( candPhones.filter(function(el){return el != ''}) ) );
     var linkedInDrop = JSON.stringify( unq( candLinkedIns.filter(function(el){return el != ''}) ) );
