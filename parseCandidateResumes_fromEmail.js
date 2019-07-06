@@ -41,8 +41,8 @@ function booleanSearch(bool,target){
   });
 }
 
-function getFolderByName(x){ //https://developers.google.com/apps-script/reference/drive/folder-iterator
-  var folders = DriveApp.getFolders();
+function getFolderByName(x){
+  var folders = DriveApp.getFolders(); //https://developers.google.com/apps-script/reference/drive/folder-iterator
   while(folders.hasNext()){
     var folder = folders.next();
     if(x.test(folder.getName())) return folder.getId();
@@ -58,7 +58,7 @@ function getEmailThreadsBySubject(searchString){
     var attachments = msgs[0].getAttachments(); //https://developers.google.com/apps-script/reference/gmail/gmail-message#getAttachments(Object)
     if(msgs[0].isUnread() && booleanSearch(searchString,subject) && attachments && attachments.length > 0) { //https://developers.google.com/apps-script/reference/gmail/gmail-thread#isUnread()
      matches.push(msgs[0]);
-    } // if msgs unread && match params
+    } // end if msgs unread && match params
   } //end forloop
   return matches;
 }
@@ -112,6 +112,7 @@ function parseCandidateSubmissions(){
         DocumentApp.openById(newDocId).setName(newFileName);
 
     } //end for(attachments)
+
     var nameCheck = candNames.filter(function(el){return el != ''});
     var nameDrop =  nameCheck.length == 1 ? candNames[0] : JSON.stringify(candNames);
     var emailDrop = JSON.stringify( unq( candEmails.filter(function(el){return el != ''}) ) );
@@ -119,12 +120,12 @@ function parseCandidateSubmissions(){
     var linkedInDrop = JSON.stringify( unq( candLinkedIns.filter(function(el){return el != ''}) ) );
     var fileDrop = JSON.stringify( unq( fileLinks.filter(function(el){return el != ''}) ) );
     var rowDrop = [[msgId,timestamp,sender,nameDrop,emailDrop,phoneDrop,linkedInDrop,fileDrop]];
-    mainSheet.insertRowBefore(2); //https://developers.google.com/apps-script/reference/spreadsheet/spreadsheet#insertrowbeforebeforeposition
+    mainSheet.insertRowBefore(2); // https://developers.google.com/apps-script/reference/spreadsheet/spreadsheet#insertrowbeforebeforeposition
     mainSheet.getRange(2,1,rowDrop.length,rowDrop[0].length).setValues(rowDrop);
-    targetEmails[i].markRead(); //https://developers.google.com/apps-script/reference/gmail/gmail-message#markRead()
-  } //end for(targetEmails)
+    targetEmails[i].markRead(); // https://developers.google.com/apps-script/reference/gmail/gmail-message#markRead()
+  } // end for(targetEmails)
 
-}//end parseCandidateSubmissions
+}// end parseCandidateSubmissions
 
 
 
