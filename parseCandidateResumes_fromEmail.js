@@ -1,3 +1,8 @@
+/*
+GOOGLE APPS SCRIPT
+This script will monitor inbound emails for a given subject name, then will parse those resumes as a Google Doc, and add a record to a spreadsheet
+*/
+
 var sheetId = 'YOUR_SPREADSHEET_ID_GOES_HERE';
 var ss = SpreadsheetApp.openById(sheetId); //https://developers.google.com/apps-script/reference/spreadsheet/spreadsheet-app#openById(String)
 var mainSheet = ss.getSheetByName('Main'); //https://developers.google.com/apps-script/reference/spreadsheet/sheet#getsheetbyname
