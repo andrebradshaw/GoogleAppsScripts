@@ -75,7 +75,7 @@ function parseCandidateSubmissions(){
     for(var a=0; a<attachments.length; a++){
         var default_name = attachments[a].getName();
         if(/\bpdf\b/i.test(default_name)){ var fileBlob = attachments[a].getAs('application/pdf')} //https://developers.google.com/apps-script/reference/base/blob#getAs(String)
-        if(/\bdocx\b/i.test(default_name)){ var fileBlob = attachments[a].getAs('application/application/vnd.openxmlformats-officedocument.wordprocessingml.document')}
+        if(/\bdocx\b/i.test(default_name)){ var fileBlob = attachments[a].getAs('application/vnd.openxmlformats-officedocument.wordprocessingml.document')}
         if(/\bdoc\b/i.test(default_name)){ var fileBlob = attachments[a].getAs('application/msword')}
         if(/\brtf\b/i.test(default_name)){ var fileBlob = attachments[a].getAs('application/rtf')}
         if(/\brtf\b/i.test(default_name)){ var fileBlob = attachments[a].getAs('text/plain')}
