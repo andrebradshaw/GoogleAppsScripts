@@ -1,4 +1,4 @@
-var sheetId = '176oKmJVrSqye7Bm6P2omz6JZjHR2r2vnxDViUL3FQ-I';
+var sheetId = 'YOUR_SHEET_ID_GOES_HERE';
 var ss = SpreadsheetApp.openById(sheetId); //https://developers.google.com/apps-script/reference/spreadsheet/spreadsheet-app#openById(String)
 var mainSheet = ss.getSheetByName('Main'); //https://developers.google.com/apps-script/reference/spreadsheet/sheet#getsheetbyname
 var emailSheet = ss.getSheetByName('TargetEmails');
