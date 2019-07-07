@@ -1,3 +1,11 @@
+/*
+Initial build video:
+https://www.youtube.com/watch?v=r05EwELmymE
+
+Edit video for this version:
+https://youtu.be/t2OaDTC5Erc
+*/
+
 var sheetId = 'YOUR_SHEET_ID_GOES_HERE';
 var ss = SpreadsheetApp.openById(sheetId); //https://developers.google.com/apps-script/reference/spreadsheet/spreadsheet-app#openById(String)
 var mainSheet = ss.getSheetByName('Main'); //https://developers.google.com/apps-script/reference/spreadsheet/sheet#getsheetbyname
@@ -7,8 +15,8 @@ var subjectSearchString = 'Candidate Submission OR candidate submittal';
 function getTargetEmails(){ 
   var lr = emailSheet.getLastRow(); //https://developers.google.com/apps-script/reference/spreadsheet/sheet#getlastrow
   var lc = emailSheet.getLastColumn(); //https://developers.google.com/apps-script/reference/spreadsheet/sheet#getlastcolumn
-  var targetEmails = emailSheet.getRange(2,1,lr,lc).getValues();
-  var emails = arr(targetEmails).map(function(el) {return el[0];}).filter(function(el){return el});
+  var targetEmails = emailSheet.getRange(1,1,lr,lc).getValues();
+  var emails = arr(targetEmails).map(function(el) {return el[0];}).filter(function(el){return /@/.test(el)});
   return emails;
 }
 
