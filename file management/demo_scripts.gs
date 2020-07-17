@@ -9,6 +9,17 @@ function getFolderIDByName(target_name) {
   }
 }
 
+function getFileIdByName(target_name){
+  var files = DriveApp.getFiles();
+  while (files.hasNext()) {
+    var file = files.next();
+    var filename = file.getName();
+    if(filename == target_name){
+      return file.getId();
+    }
+  }
+}
+
 function deleteFileById(id){
   var file = DriveApp.getFileById(id);
   file.setTrashed(true);
