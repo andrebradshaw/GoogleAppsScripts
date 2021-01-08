@@ -5,40 +5,63 @@
 const your_spreadsheet_id = '1U5ahDlrQ4AJjiCsAfICOW1FMRrICzuZuNc6bXdTT01A';
 const your_sheet_name = '1609963645326';
 const your_title_search = `Software~Engineer OR software dev`; //takes a boolean search
-const your_company_name_search = `freelance`; //takes a boolean search
+const your_company_name_search = `affirm`; //takes a boolean search
 
 function runSearch(){
-  const avg_time_w_company = getAverageTimeInCompanyNameSearch(your_company_name_search);
-  const avg_time_w_title = getAverageTimeInCompanyNameSearch(your_title_search);
+  const avg_time_w_company = getAverageTimeWithKeySearch(your_company_name_search,'job_company_name');
+  const avg_time_w_title = getAverageTimeWithKeySearch(your_title_search,'job_title');
   console.log('avg time with title:\n'+avg_time_w_title+'\n\navg time at company:\n'+avg_time_w_company);
 }
 
-function getAverageTimeWithTitleSearch(booleanString){
+function jobMovementAnalysis(){
+  const bycompanies = jobAfterBeforeKeySearch(your_company_name_search,'job_company_name');
+  const companies_before = countKeys(bycompanies,'job_company_name','jobs_before_match');
+  const companies_after = countKeys(bycompanies,'job_company_name','jobs_after_match');
+  console.log(companies_after)
+}
+
+function jobAfterBeforeKeySearch(booleanString,key){
   const ss = SpreadsheetApp.openById(your_spreadsheet_id);
   const sheet = ss.getSheetByName(your_sheet_name);
   const table = getTableValuesBy(sheet);
   const renested = renestJobs(table);
   const xarr = buildSearchSet(booleanString);
-  const work = renested.filter( record=> record.jobs.filter( job=> xarr.every( x=> x.test(job.job_title) ) ).length );
+  return renested.map(record=> {
+    let jobs_before_match = [];
+    let jobs_after_match = [];
+    record.jobs.forEach((j,i,r)=> {
+      if(xarr.every(x=> x.test(j[key]))) {
+        if(r[(i-1)]) jobs_before_match.push(r[(i-1)])
+        if(r[(i+1)]) jobs_after_match.push(r[(i+1)])
+      }
+    })
+    return cleanObject({...record,...{jobs_after_match:jobs_after_match},...{jobs_before_match:jobs_before_match}});
+  });
+}
+function countKeys(records,key,matchkey){
+  const mapped = records.filter(r=> r[matchkey]).map(r=> r[matchkey] ? r[matchkey].map(j=> j[key]) : []).flat();
+  let counted = unqHsh(mapped,{}).map(j=> {
+    return {
+      ...{match:j},
+      ...{ count: mapped.filter(m=> m == j).length},
+    }
+  });
+  counted.sort((a,b)=> a.count - b.count);
+  counted.reverse();
+  return counted;
+}
+function getAverageTimeWithKeySearch(booleanString,key){
+  const ss = SpreadsheetApp.openById(your_spreadsheet_id);
+  const sheet = ss.getSheetByName(your_sheet_name);
+  const table = getTableValuesBy(sheet);
+  const renested = renestJobs(table);
+  const xarr = buildSearchSet(booleanString);
+  const work = renested.filter( record=> record.jobs.filter( job=> xarr.every( x=> x.test(job[key]) ) ).length );
   const times = renested.map(record=> {
-    let matching = record.jobs.filter( job=> xarr.every( x=> x.test(job.job_title) ) ).map( job=> job.years_in_job ? parseFloat(job.years_in_job) : 0.02);
+    let matching = record.jobs.filter( job=> xarr.every( x=> x.test(job[key]) ) ).map( job=> job.years_in_job ? parseFloat(job.years_in_job) : 0.02);
     return matching.length ? matching.reduce((a,b)=> a+b) : 0;
   });
   return times.reduce((a,b)=> a+b) / work.length;
-}
-
-function getAverageTimeInCompanyNameSearch(booleanString){
-  const ss = SpreadsheetApp.openById(your_spreadsheet_id);
-  const sheet = ss.getSheetByName(your_sheet_name);
-  const table = getTableValuesBy(sheet);
-  const renested = renestJobs(table);
-  const xarr = buildSearchSet(booleanString);
-  const worked_at_target_company = renested.filter( record=> record.jobs.filter( job=> xarr.every( x=> x.test(job.job_company_name) ) ).length );
-  const times_at_target_company = renested.map(record=> {
-    let matching_jobs = record.jobs.filter( job=> xarr.every( x=> x.test(job.job_company_name) ) ).map( job=> job.years_in_job ? parseFloat(job.years_in_job) : 0.02);
-    return matching_jobs.length ? matching_jobs.reduce((a,b)=> a+b) : 0;
-  });
-  return times_at_target_company.reduce((a,b)=> a+b) / worked_at_target_company.length;
 }
 
 /*This translates the jobs back into a nested array so we can filter down on jobs by candidate record */
@@ -128,6 +151,17 @@ function table2JSON(table){
   }
   return arr;
 }
+const unqHsh = (a,o) => a.filter(i=> o.hasOwnProperty(i) ? false : (o[i] = true));
+
+const cleanObject = (ob) => 
+  Object.entries(ob).reduce((r, [k, v]) => {
+    if(v != null && v != undefined && v != "" && ( typeof v == 'boolean' || typeof v == 'string' || typeof v == 'symbol' || typeof v == 'number' || typeof v == 'function' || (typeof v == 'object'  && ((Array.isArray(v) && v.length) || (Array.isArray(v) != true)) ) ) ) { 
+      r[k] = v; 
+      return r;
+    } else { 
+     return r; 
+    }
+  }, {});
 
 const getColumn = (i,table) => table.map(col=> col[i]); 
 /* utility sheets
