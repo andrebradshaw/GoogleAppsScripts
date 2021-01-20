@@ -25,17 +25,24 @@ function getDataFromCSEURLs() {
 
   for(let i=1; i<table.length; i++){
     let url = table[i][target_col_index].replace(/\s+/g,'%20').replace(/"/g,'%22');
-    let res = UrlFetchApp.fetch(url);
-    let data = JSON.parse(res);
-    let updated_row = [
-      ...table[i],
-      ...[
-        (data && data.items && data.items[0] && data.items[0].link ? data.items[0].link : ''),
-        (data && data.items && data.items[0] && data.items[0].snippet ? data.items[0].snippet : ''),
-        (data && data.items && data.items[0] && data.items[0].title ? data.items[0].title : ''),
-      ]
-    ];
-    updated_table.push(updated_row);
+    if(/customsearch.googleapis/.test(url)){
+      let res = UrlFetchApp.fetch(url);
+      let data = JSON.parse(res);
+      let updated_row = [
+        ...table[i],
+          ...[
+            (data && data.items && data.items[0] && data.items[0].link ? data.items[0].link : ''),
+            (data && data.items && data.items[0] && data.items[0].snippet ? data.items[0].snippet : ''),
+            (data && data.items && data.items[0] && data.items[0].title ? data.items[0].title : ''),
+          ]
+          ];
+      updated_table.push(updated_row);
+    }else{
+      updated_table.push([
+        ...table[i],
+        ...['','','']
+      ]);
+    }
   }
   var sn = 'CSE Results_'+Math.round(new Date().getTime()/1000);
   SpreadsheetApp.getActiveSpreadsheet().insertSheet(sn);
