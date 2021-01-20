@@ -30,9 +30,9 @@ function getDataFromCSEURLs() {
     let updated_row = [
       ...table[i],
       ...[
-        data.items[0].link,
-        data.items[0].snippet,
-        data.items[0].title
+        (data && data.items && data.items[0] && data.items[0].link ? data.items[0].link : ''),
+        (data && data.items && data.items[0] && data.items[0].snippet ? data.items[0].snippet : ''),
+        (data && data.items && data.items[0] && data.items[0].title ? data.items[0].title : ''),
       ]
     ];
     updated_table.push(updated_row);
